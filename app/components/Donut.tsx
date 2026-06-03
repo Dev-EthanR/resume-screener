@@ -1,7 +1,7 @@
 "use client";
 
 import CircularProgress from "@mui/material/CircularProgress";
-import { useDonut } from "../hooks/useDonut";
+import { useProgress } from "../hooks/useProgress";
 import CountUp from "react-countup";
 import clsx from "clsx";
 
@@ -12,6 +12,7 @@ interface Props {
   progressColor?: string;
   textColor?: string;
   percentLabel?: boolean;
+  instant?: boolean;
 }
 
 const sizeConfig = {
@@ -45,8 +46,9 @@ const Donut = ({
   progressColor,
   textColor,
   percentLabel = true,
+  instant = false,
 }: Props) => {
-  const { progress, durationInMs, durationInSeconds } = useDonut(percentage);
+  const { progress, durationInMs, durationInSeconds } = useProgress(percentage);
   const { px, thickness, numClass, unitClass, labelClass } = sizeConfig[size];
 
   return (
@@ -55,10 +57,10 @@ const Donut = ({
         enableTrackSlot
         variant="determinate"
         className={clsx(!progressColor && "text-accent!")}
-        value={progress}
+        value={instant ? percentage : progress}
         size={px}
         thickness={thickness}
-        aria-label="Report progress"
+        aria-label={`${percentage}% complete`}
         sx={{
           strokeLinecap: "round",
           ...(progressColor && { color: progressColor }),
@@ -70,7 +72,7 @@ const Donut = ({
       <div className="absolute flex flex-col items-center justify-center font-bold">
         <div>
           <CountUp
-            start={0}
+            start={instant ? percentage : 0}
             end={percentage}
             duration={durationInSeconds}
             className={clsx(!textColor && "text-white", numClass)}

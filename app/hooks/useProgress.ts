@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 
 const MOUNT_DELAY_MS = 10;
 
-export function useDonut(percentage: number, durationInMs: number = 1000) {
+export function useProgress(value: number, durationInMs: number = 1000) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setProgress(percentage), MOUNT_DELAY_MS);
+    const timer = setTimeout(() => setProgress(value), MOUNT_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [percentage]);
+  }, [value]);
 
   return {
     progress,
