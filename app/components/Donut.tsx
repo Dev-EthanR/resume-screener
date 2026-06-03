@@ -33,7 +33,7 @@ const Donut = ({
   const {
     progressColor = "blue",
     numColor = "white",
-    unitColor = "white",
+    unitColor = "gray",
     labelColor = "white",
   } = color || {};
 
