@@ -50,7 +50,7 @@ const Donut = ({
         sx={{
           strokeLinecap: "round",
           "& .MuiCircularProgress-circle": {
-            transition: `stroke-dashoffset ${durationInMs}ms ease-out`,
+            transition: `stroke-dashoffset ${instant ? 0 : durationInMs}ms ease-out`,
           },
         }}
       />

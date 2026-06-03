@@ -1,3 +1,4 @@
+"use client";
 import Badge from "./Badge";
 import Donut from "./Donut";
 import CheckIcon from "@mui/icons-material/Check";

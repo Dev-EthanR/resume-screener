@@ -1,7 +1,7 @@
 export const donutColorMap = {
   blue: "text-accent!",
   green: "text-success!",
-  red: "text-danger!",
+  red: "text-danger-500!",
   yellow: "text-warning!",
   white: "text-white!",
   gray: "text-text!",

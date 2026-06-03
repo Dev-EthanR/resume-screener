@@ -1,4 +1,5 @@
-import React, { JSX } from "react";
+"use client";
+import { JSX } from "react";
 
 interface Props {
   icon: JSX.Element;
