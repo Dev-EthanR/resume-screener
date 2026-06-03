@@ -4,66 +4,51 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useProgress } from "../hooks/useProgress";
 import CountUp from "react-countup";
 import clsx from "clsx";
+import {
+  donutColorMap,
+  DonutColors,
+  donutSizeConfig,
+} from "../config/donut.config";
 
 interface Props {
   percentage: number;
   size: "small" | "medium" | "large";
   text?: string;
-  progressColor?: string;
-  textColor?: string;
+  color?: DonutColors;
   percentLabel?: boolean;
   instant?: boolean;
 }
-
-const sizeConfig = {
-  small: {
-    px: 80,
-    thickness: 3,
-    numClass: "text-2xl",
-    unitClass: "text-sm",
-    labelClass: "text-[0.575rem]",
-  },
-  medium: {
-    px: 120,
-    thickness: 4,
-    numClass: "text-4xl",
-    unitClass: "text-xl",
-    labelClass: "text-xs",
-  },
-  large: {
-    px: 160,
-    thickness: 5,
-    numClass: "text-5xl",
-    unitClass: "text-2xl",
-    labelClass: "text-sm",
-  },
-};
 
 const Donut = ({
   percentage,
   text,
   size,
-  progressColor,
-  textColor,
+  color,
   percentLabel = true,
   instant = false,
 }: Props) => {
   const { progress, durationInMs, durationInSeconds } = useProgress(percentage);
-  const { px, thickness, numClass, unitClass, labelClass } = sizeConfig[size];
+  const { px, thickness, numClass, unitClass, labelClass } =
+    donutSizeConfig[size];
+  const {
+    progressColor = "blue",
+    numColor = "white",
+    unitColor = "white",
+    labelColor = "white",
+  } = color || {};
 
   return (
     <div className="relative flex items-center justify-center">
       <CircularProgress
         enableTrackSlot
         variant="determinate"
-        className={clsx(!progressColor && "text-accent!")}
+        className={donutColorMap[progressColor]}
         value={instant ? percentage : progress}
         size={px}
         thickness={thickness}
         aria-label={`${percentage}% complete`}
         sx={{
           strokeLinecap: "round",
-          ...(progressColor && { color: progressColor }),
           "& .MuiCircularProgress-circle": {
             transition: `stroke-dashoffset ${durationInMs}ms ease-out`,
           },
@@ -74,24 +59,15 @@ const Donut = ({
           <CountUp
             start={instant ? percentage : 0}
             end={percentage}
-            duration={durationInSeconds}
-            className={clsx(!textColor && "text-white", numClass)}
-            style={textColor ? { color: textColor } : undefined}
+            duration={instant ? 0 : durationInSeconds}
+            className={clsx(donutColorMap[numColor], numClass)}
           />
           {percentLabel && (
-            <span
-              className={clsx(!textColor && "text-text", unitClass)}
-              style={textColor ? { color: textColor } : undefined}
-            >
-              %
-            </span>
+            <span className={clsx(donutColorMap[unitColor], unitClass)}>%</span>
           )}
         </div>
         {text && (
-          <div
-            className={clsx(!textColor && "text-accent", labelClass)}
-            style={textColor ? { color: textColor } : undefined}
-          >
+          <div className={clsx(donutColorMap[labelColor], labelClass)}>
             {text}
           </div>
         )}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/layout/Navbar";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -22,7 +24,12 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakartaSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+          <Navbar />
+          <main className="flex-1 page-width">{children}</main>
+        </AppRouterCacheProvider>
+      </body>
     </html>
   );
 }
