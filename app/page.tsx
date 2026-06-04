@@ -36,9 +36,9 @@ export default function Home() {
         <AutoAwesomeIcon fontSize="small" />
         AI-powered resume analysis
       </Badge>
-      <div className="flex flex-col md:flex-row items-start w-full justify-between">
+      <div className="flex flex-col md:flex-row items-start w-full justify-between gap-6">
         <div className="max-w-xl flex flex-col gap-4">
-          <h1 className="text-5xl font-bold text-white ">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white ">
             Tailor your resume to <span className="text-accent">any job</span>{" "}
             in seconds
           </h1>
@@ -49,7 +49,7 @@ export default function Home() {
           </p>
           <Link
             href="/upload"
-            className="btn-primary w-fit group flex items-center gap-1"
+            className="btn-primary w-fit group flex items-center gap-1 mb-4"
           >
             <span>Analyze my resume</span>
             <span className="transition-transform duration-200 ease-out group-hover:translate-x-1.5">

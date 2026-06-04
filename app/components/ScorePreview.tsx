@@ -22,7 +22,7 @@ const ScorePreview = () => {
     <div className="flex flex-col items-center gap-6 border border-border rounded-lg p-6 bg-surface w-full max-w-lg">
       <div className="flex items-center justify-between w-full text-sm">
         <span>Your report</span>
-        <Badge color="green" className="ml-2">
+        <Badge color="green" className="ml-2 ">
           <CheckIcon fontSize="small" />
           Strong
         </Badge>
@@ -35,7 +35,7 @@ const ScorePreview = () => {
           labelColor: "green",
         }}
       />
-      <div className="flex gap-2 flex-wrap">
+      <div className="grid grid-cols-2 lg:flex lg:flex-nowrap gap-3">
         {skills.map(({ label, color }) => (
           <Badge key={label} color={color}>
             {color === "green" ? (
