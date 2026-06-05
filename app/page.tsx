@@ -31,7 +31,7 @@ const cardContent = [
 
 export default function Home() {
   return (
-    <div className="w-full py-12">
+    <div className="page-width w-full py-12">
       <Badge color="blue" className="mb-6">
         <AutoAwesomeIcon fontSize="small" />
         AI-powered resume analysis

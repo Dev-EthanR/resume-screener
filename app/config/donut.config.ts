@@ -17,6 +17,13 @@ export interface DonutColors {
 export type DonutColor = keyof typeof donutColorMap;
 
 export const donutSizeConfig = {
+  extrasmall: {
+    px: 50,
+    thickness: 4,
+    numClass: "text-md",
+    unitClass: "text-sm",
+    labelClass: "text-[0.575rem]",
+  },
   small: {
     px: 80,
     thickness: 3,
@@ -39,3 +46,5 @@ export const donutSizeConfig = {
     labelClass: "text-sm",
   },
 };
+
+export type DonutSize = keyof typeof donutSizeConfig;

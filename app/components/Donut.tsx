@@ -7,15 +7,16 @@ import clsx from "clsx";
 import {
   donutColorMap,
   DonutColors,
+  DonutSize,
   donutSizeConfig,
 } from "../config/donut.config";
 
 interface Props {
   percentage: number;
-  size: "small" | "medium" | "large";
+  size: DonutSize;
   text?: string;
   color?: DonutColors;
-  percentLabel?: boolean;
+  removePercentLabel?: boolean;
   instant?: boolean;
 }
 
@@ -24,7 +25,7 @@ const Donut = ({
   text,
   size,
   color,
-  percentLabel = true,
+  removePercentLabel = false,
   instant = false,
 }: Props) => {
   const { progress, durationInMs, durationInSeconds } = useProgress(percentage);
@@ -62,7 +63,7 @@ const Donut = ({
             duration={instant ? 0 : durationInSeconds}
             className={clsx(donutColorMap[numColor], numClass)}
           />
-          {percentLabel && (
+          {!removePercentLabel && (
             <span className={clsx(donutColorMap[unitColor], unitClass)}>%</span>
           )}
         </div>
