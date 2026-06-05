@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
+import UserMenu from "./UserMenu";
 
 export const Logo = () => {
   return (
@@ -13,22 +14,21 @@ export const Logo = () => {
 
 const Navbar = async () => {
   const session = await auth();
-  console.log(session?.user);
+  const initials = (
+    session?.user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("") ?? session?.user?.email?.[0]
+  )
+    ?.slice(0, 2)
+    .toUpperCase();
+
   return (
     <div className="border-b border-border">
       <div className="page-width py-4 flex items-center justify-between">
         <Logo />
-        {session?.user ? (
-          <div className="rounded-full bg-accent font-bold text-white size-7 flex justify-center items-center text-sm">
-            {(
-              session.user.name
-                ?.split(" ")
-                .map((n) => n[0])
-                .join("") ?? session.user.email?.[0]
-            )
-              ?.slice(0, 2)
-              .toUpperCase()}
-          </div>
+        {session?.user && initials ? (
+          <UserMenu initials={initials} user={session.user} />
         ) : (
           <Link href="/auth/signin" className="btn-outline py-1.5 ">
             Sign In

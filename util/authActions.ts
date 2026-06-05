@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/lib/auth";
+import { signIn, signOut } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LoginType, SignUpType } from "@/util/schemas/auth.schema";
 import bcrypt from "bcrypt";
@@ -23,6 +23,10 @@ const handleAuthError = (
 const signInWithCredentials = async (email: string, password: string) => {
   await signIn("credentials", { email, password, redirectTo: "/dashboard" });
 };
+
+export async function signOutAction() {
+  await signOut({ redirectTo: "/auth/signin" });
+}
 
 export async function loginAction(formData: LoginType): Promise<AuthState> {
   try {
