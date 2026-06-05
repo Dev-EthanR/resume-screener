@@ -39,9 +39,9 @@ const AuthForm = <T extends FieldValues>({ isSignup, onSubmit }: Props<T>) => {
       className="flex flex-col w-full gap-1"
     >
       {isSignup && (
-        <FormField label="Name" error={errors.name?.message as string}>
+        <FormField label="Full Name" error={errors.name?.message as string}>
           <input
-            {...register("name" as Path<T>)}
+            {...register("fullName" as Path<T>)}
             type="text"
             placeholder="Alex Rivera"
             className="input"

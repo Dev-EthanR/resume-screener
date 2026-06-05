@@ -7,7 +7,7 @@ export const loginInSchema = z.object({
 
 export const signUpSchema = loginInSchema.extend({
   password: z.string().min(8, "Password must be atleast 8 characters"),
-  name: z.string().min(1, "Name is required"),
+  fullName: z.string().min(1, "Name is required"),
 });
 
 export type LoginType = z.infer<typeof loginInSchema>;

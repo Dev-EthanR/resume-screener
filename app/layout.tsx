@@ -26,8 +26,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <Navbar />
-          <main className="flex-1 ">{children}</main>
+          {children}
         </AppRouterCacheProvider>
       </body>
     </html>

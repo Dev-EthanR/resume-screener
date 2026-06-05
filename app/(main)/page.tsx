@@ -1,12 +1,12 @@
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import Badge from "./components/Badge";
-import ScorePreview from "./components/ScorePreview";
 import Link from "next/link";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SpeedIcon from "@mui/icons-material/Speed";
-import InfoCard from "./components/InfoCard";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import StarsIcon from "@mui/icons-material/Stars";
+import InfoCard from "../components/InfoCard";
+import ScorePreview from "../components/ScorePreview";
+import Badge from "../components/Badge";
 
 const cardContent = [
   {
@@ -31,7 +31,7 @@ const cardContent = [
 
 export default function Home() {
   return (
-    <div className="page-width w-full py-12">
+    <div className="">
       <Badge color="blue" className="mb-6">
         <AutoAwesomeIcon fontSize="small" />
         AI-powered resume analysis

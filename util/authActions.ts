@@ -33,14 +33,14 @@ export async function loginAction(formData: LoginType): Promise<AuthState> {
 }
 
 export async function registerAction(formData: SignUpType): Promise<AuthState> {
-  const { name, email, password } = formData;
+  const { fullName, email, password } = formData;
 
   const existing = await prisma.user.findUnique({ where: { email } });
 
   if (existing) return { error: "An account with that email already exists" };
 
   const hashed = await bcrypt.hash(password, 10);
-  await prisma.user.create({ data: { name, email, password: hashed } });
+  await prisma.user.create({ data: { fullName, email, password: hashed } });
 
   try {
     await signInWithCredentials(email, password);
