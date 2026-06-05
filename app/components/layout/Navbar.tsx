@@ -1,12 +1,11 @@
 import { auth } from "@/lib/auth";
-import Image from "next/image";
 import Link from "next/link";
 import UserMenu from "./UserMenu";
 
 export const Logo = () => {
   return (
     <Link href="/" className="flex items-center">
-      <Image src="/logo.png" alt="Resumatch Logo" width={30} height={30} />
+      <img src="/logo.png" alt="Resumatch Logo" width={30} height={30} />
       <span className="ml-2 font-bold text-lg text-white">Resumatch</span>
     </Link>
   );
