@@ -1,14 +1,16 @@
-"use client";
+import { loginAction } from "@/util/authActions";
 import AuthForm from "@/app/components/layout/AuthForm";
-import { LoginType, loginInSchema } from "@/lib/schemas/auth.schema";
+import AuthLayout from "@/app/components/layout/AuthLayout";
+import { LoginType } from "@/util/schemas/auth.schema";
+
 const SignInPage = () => {
   return (
-    <AuthForm<LoginType>
-      schema={loginInSchema}
-      onSubmit={(data) => console.log(data)}
+    <AuthLayout
       title="Welcome back"
       subTitle="Sign in to pick up where you left off."
-    />
+    >
+      <AuthForm<LoginType> onSubmit={loginAction} />
+    </AuthLayout>
   );
 };
 

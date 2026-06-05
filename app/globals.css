@@ -20,7 +20,7 @@
 
 @layer utilities {
   .btn-outline {
-    @apply border border-border rounded px-3 py-1.5 text-sm text-white hover:bg-border transition cursor-pointer;
+    @apply border border-border rounded-lg px-3 text-sm text-white hover:bg-border transition cursor-pointer;
   }
   .btn-primary {
     @apply bg-accent text-white px-5 py-3 rounded-lg hover:bg-accent/70 transition-colors cursor-pointer;

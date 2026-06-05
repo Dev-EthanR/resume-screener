@@ -20,7 +20,7 @@ const Navbar = () => {
     <div className="border-b border-border">
       <div className="page-width py-4 flex items-center justify-between">
         <Logo />
-        <Link href="/auth/signin" className="btn-outline">
+        <Link href="/auth/signin" className="btn-outline py-1.5 ">
           Sign In
         </Link>
       </div>
