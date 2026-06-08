@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { JSX } from "react";
-import Icon from "./Icon";
+import Icon from "../Icon";
 
 type Characters = Required<{
   characterLimit: number;

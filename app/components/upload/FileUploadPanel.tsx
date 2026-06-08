@@ -8,10 +8,10 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { UploadType } from "@/util/schemas/upload.schema";
-import { useFileUpload } from "../hooks/useFileUpload";
+import { useFileUpload } from "../../hooks/useFileUpload";
 import { formatFileSize } from "@/util/formatFileSize";
 import UploadHeader from "./UploadHeader";
-import Icon from "./Icon";
+import Icon from "../Icon";
 
 interface Props {
   register: UseFormRegister<UploadType>;
