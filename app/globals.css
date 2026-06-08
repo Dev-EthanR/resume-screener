@@ -16,6 +16,7 @@
   --color-text: #a9bbd0;
   --color-border: #4a5565;
   --font-sans: var(--font-plus-jakarta-sans);
+  --font-jetbrains: var(--font-jetbrains-mono);
 }
 
 @layer utilities {
@@ -36,6 +37,15 @@
   }
   .page-width {
     @apply max-w-6xl mx-auto w-full px-8;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 body {
