@@ -1,17 +1,17 @@
-import clsx from "clsx";
+import { formatFileSize } from "@/util/formatFileSize";
+import { UploadType } from "@/util/schemas/upload.schema";
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
-import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
+import clsx from "clsx";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
-import { UploadType } from "@/util/schemas/upload.schema";
 import { useFileUpload } from "../../hooks/useFileUpload";
-import { formatFileSize } from "@/util/formatFileSize";
-import UploadHeader from "./UploadHeader";
 import Icon from "../Icon";
+import UploadHeader from "./UploadHeader";
 
 interface Props {
   register: UseFormRegister<UploadType>;

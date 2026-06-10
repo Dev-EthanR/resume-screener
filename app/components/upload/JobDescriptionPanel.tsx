@@ -1,9 +1,9 @@
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import { UseFormRegister } from "react-hook-form";
 import {
   DESCRIPTION_MAX_LENGTH,
   UploadType,
 } from "@/util/schemas/upload.schema";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { UseFormRegister } from "react-hook-form";
 import UploadHeader from "./UploadHeader";
 
 interface Props {
