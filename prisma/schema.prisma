@@ -22,8 +22,21 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  analyseProcesses AnalyseProcess[]
+}
+
+model AnalyseProcess {
+  id               String @id @default(cuid())
+  userId           String
+  parsingStatus    Status @default(pending)
+  readingStatus    Status @default(pending)
+  comparingStatus  Status @default(pending)
+  generatingStatus Status @default(pending)
+  result           Json
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Account {
@@ -63,4 +76,10 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+enum Status {
+  generating
+  pending
+  done
 }
