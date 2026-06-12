@@ -1,41 +1,36 @@
+import { runAnalysis } from "@/lib/analyse";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uploadSchema } from "@/util/schemas/upload.schema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const body = req.body;
   const session = await auth();
-
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
-    if (!session?.user)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const formData = await req.formData();
+    const file = formData.get("file");
+    const description = formData.get("description");
 
-    const uploadParse = uploadSchema.safeParse(body);
-    if (!uploadParse.success)
-      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
-
-    const { description, file } = uploadParse.data;
-
-    const process = await prisma.analyseProcess.create({
-      data: {
-        userId: session.user.id,
-        result: {},
-      },
-    });
-
-    if (process.parsingStatus === "pending") {
-      parseFile(file);
+    const parsed = uploadSchema.safeParse({ file, description });
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid" }, { status: 400 });
     }
 
-    return NextResponse.json(process, { status: 202 });
-  } catch (error) {
-    return NextResponse.json({ error: "server error" }, { status: 500 });
-  }
-}
+    const { file: validatedFile, description: validatedDescription } =
+      parsed.data;
 
-function parseFile(file: File) {
-  console.log(file.name);
+    const process = await prisma.analyseProcess.create({
+      data: { userId: session.user.id, result: {} },
+    });
+
+    const buffer = Buffer.from(await validatedFile.arrayBuffer());
+    runAnalysis(process.id, buffer, validatedDescription);
+
+    return NextResponse.json({ id: process.id }, { status: 202 });
+  } catch {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
 }

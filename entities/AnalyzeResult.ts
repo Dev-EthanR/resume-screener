@@ -5,4 +5,5 @@ export interface AnalyzeResult {
     matched: string[];
   };
   improvementBullets: string[];
+  summary: string;
 }

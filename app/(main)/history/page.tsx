@@ -1,7 +1,11 @@
 import React from "react";
 
 const HistoryPage = () => {
-  return <div>HistoryPage</div>;
+  return (
+    <div>
+      <h1>History Page</h1>
+    </div>
+  );
 };
 
 export default HistoryPage;

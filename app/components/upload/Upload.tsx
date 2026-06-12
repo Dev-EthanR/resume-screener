@@ -1,12 +1,17 @@
 "use client";
 import { uploadSchema, UploadType } from "@/util/schemas/upload.schema";
+import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { flushSync } from "react-dom";
 import { useForm } from "react-hook-form";
 import FileUploadPanel from "./FileUploadPanel";
 import JobDescriptionPanel from "./JobDescriptionPanel";
-import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 
 const Upload = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -18,7 +23,28 @@ const Upload = () => {
   });
   const currentCharacter = (watch("description") ?? "").length;
 
-  function onSubmit() {}
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: async (data: UploadType) => {
+      const fd = new FormData();
+      fd.append("file", data.file);
+      fd.append("description", data.description);
+      const res = await axios.post<{ id: string }>("/api/process", fd);
+      return res.data;
+    },
+    onSuccess: ({ id }) => {
+      const navigate = () => router.push(`/upload/results/${id}?step=2`);
+      if (typeof document !== "undefined" && "startViewTransition" in document) {
+        (document as Document & { startViewTransition: (cb: () => void) => void })
+          .startViewTransition(() => flushSync(navigate));
+      } else {
+        navigate();
+      }
+    },
+  });
+
+  function onSubmit(data: UploadType) {
+    mutate(data);
+  }
 
   return (
     <form
@@ -44,9 +70,15 @@ const Upload = () => {
           </p>
         )}
       </div>
+      {error && <p className="text-danger-500 text-sm mt-2">{error.message}</p>}
       <div className="lg:col-span-2 flex justify-end">
-        <button className="btn-primary font-medium" type="submit">
-          <BoltOutlinedIcon fontSize="small" /> Analyze
+        <button
+          className="btn-primary font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          type="submit"
+          disabled={isPending}
+        >
+          <BoltOutlinedIcon fontSize="small" />
+          {isPending ? "Uploading..." : "Analyze"}
         </button>
       </div>
     </form>

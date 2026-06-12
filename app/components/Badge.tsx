@@ -12,9 +12,9 @@ const Badge = ({ children, color, className }: Props) => {
   return (
     <div
       className={clsx(
+        className,
         "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium border",
         badgeColorStyles[color],
-        className,
       )}
     >
       <span className="flex items-center gap-2">{children}</span>

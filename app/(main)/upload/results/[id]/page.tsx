@@ -1,0 +1,82 @@
+"use client";
+import AnalysisResults from "@/app/components/results/AnalysisResults";
+import PhaseTracker from "@/app/components/results/PhaseTracker";
+import { AnalyzeResult } from "@/entities/AnalyzeResult";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+
+interface ProcessData {
+  id: string;
+  parsingStatus: "pending" | "generating" | "done";
+  readingStatus: "pending" | "generating" | "done";
+  comparingStatus: "pending" | "generating" | "done";
+  generatingStatus: "pending" | "generating" | "done";
+  result: AnalyzeResult | Record<string, never>;
+}
+
+async function fetchProcess(id: string): Promise<ProcessData> {
+  const res = await axios.get(`/api/process/${id}`);
+  return res.data;
+}
+
+const ResultsPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const stepParam = searchParams.get("step");
+  const inFlow = stepParam !== null;
+  const alreadyDone = stepParam === "3";
+
+  const { data, isError, error } = useQuery({
+    queryKey: ["process", id],
+    queryFn: () => fetchProcess(id),
+    refetchInterval: (query) => {
+      if (query.state.data?.generatingStatus === "done") return false;
+      return 2000;
+    },
+  });
+
+  const isDone = data?.generatingStatus === "done";
+
+  useEffect(() => {
+    if (isDone && inFlow && !alreadyDone) {
+      router.replace(`/upload/results/${id}?step=3`);
+    }
+  }, [isDone, inFlow, alreadyDone, id, router]);
+
+  if (isError)
+    return (
+      <div className="text-danger-100">
+        Something went wrong. Please try again.
+        {error.message}
+      </div>
+    );
+
+  const loadingProcess = {
+    parsingStatus: "generating" as const,
+    readingStatus: "pending" as const,
+    comparingStatus: "pending" as const,
+    generatingStatus: "pending" as const,
+  };
+
+  return (
+    <div>
+      {isDone && (
+        <p className="uppercase text-accent text-xs">Analysis complete</p>
+      )}
+
+      {!isDone && inFlow && !alreadyDone && (
+        <PhaseTracker process={data ?? loadingProcess} />
+      )}
+
+      {isDone && data && "score" in data.result && (
+        <AnalysisResults result={data.result as AnalyzeResult} />
+      )}
+    </div>
+  );
+};
+
+export default ResultsPage;

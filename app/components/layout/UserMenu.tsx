@@ -2,11 +2,11 @@
 
 import { signOutAction } from "@/util/authActions";
 import LogoutIcon from "@mui/icons-material/Logout";
+import SettingsIcon from "@mui/icons-material/Settings";
 import clsx from "clsx";
 import { User } from "next-auth";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import SettingsIcon from "@mui/icons-material/Settings";
 
 interface Props {
   initials: string;
@@ -50,6 +50,7 @@ const UserMenu = ({ initials, user }: Props) => {
               <div className="text-xs truncate">{user.email}</div>
             </div>
           </div>
+
           <Link
             href="/settings"
             className="text-xs font-semi-bold hover:text-white transition-colors flex items-center gap-2 pl-1"

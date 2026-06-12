@@ -6,13 +6,10 @@ export const DESCRIPTION_MAX_LENGTH = 8000;
 export const uploadSchema = z.object({
   file: z
     .any()
-    .refine((files) => files?.length > 0, "File is required")
+    .refine((f): f is File => f instanceof File, "File is required")
+    .refine((f: File) => f.size <= MAX_FILE_SIZE, "File size must be under 5MB")
     .refine(
-      (files) => !files?.[0] || files[0].size <= MAX_FILE_SIZE,
-      "File size must be under 5MB",
-    )
-    .refine(
-      (files) => !files?.[0] || files[0].type === "application/pdf",
+      (f: File) => f.type === "application/pdf",
       "Only PDF files are accepted",
     ),
   description: z
@@ -21,7 +18,8 @@ export const uploadSchema = z.object({
     .max(
       DESCRIPTION_MAX_LENGTH,
       "Job description cannot be more than 8000 characters",
-    ),
+    )
+    .trim(),
 });
 
 export type UploadType = z.infer<typeof uploadSchema>;

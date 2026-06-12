@@ -1,13 +1,5 @@
-import { auth } from "@/lib/auth";
-
 const DashboardPage = async () => {
-  const session = await auth();
-  return (
-    <div>
-      Welcome back {session?.user?.name}
-      {session?.user?.image}
-    </div>
-  );
+  return <div>Dashboard page</div>;
 };
 
 export default DashboardPage;

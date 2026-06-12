@@ -35,8 +35,11 @@
   .input {
     @apply bg-background pl-4 py-2 pr-10 rounded-lg focus-visible:outline-1 outline-accent border-border border text-white;
   }
+  .icon {
+    @apply rounded-lg p-2 bg-background text-accent border-border border size-8 flex items-center justify-center;
+  }
   .page-width {
-    @apply max-w-6xl mx-auto w-full px-8;
+    @apply max-w-6xl mx-auto w-full px-4 md:px-8;
   }
 
   .scrollbar-hide {
@@ -52,4 +55,16 @@ body {
   background: var(--background);
   color: var(--color-text);
   font-family: var(--font-sans) arial sans-serif;
+}
+
+::view-transition-old(phase-tracker),
+::view-transition-new(phase-tracker) {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 150ms;
+  animation-timing-function: ease-out;
 }
