@@ -2,10 +2,8 @@
 import Donut from "@/app/components/Donut";
 import { AnalyzeResult } from "@/entities/AnalyzeResult";
 import { scoreDonutColor, scoreLabel } from "@/util/score";
-import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { useState } from "react";
+import CopyButton from "../CopyButton";
 import SkillBlock from "./SkillBlock";
 
 interface Props {
@@ -71,49 +69,23 @@ const AnalysisResults = ({ result }: Props) => {
           Suggested resume improvements
         </div>
         <ul className="space-y-3">
-          {improvementBullets.map((bullet, i) => (
-            <CopyBullet key={i} index={i} text={bullet} />
+          {improvementBullets.map((bullet, index) => (
+            <li
+              key={index}
+              className="grid grid-cols-2 md:flex gap-3 text-sm group border border-border rounded-lg p-3 bg-surface"
+            >
+              <div className="text-accent font-bold shrink-0 mt-0.5 order-1">
+                <div className="icon border-none select-none">{index + 1}</div>
+              </div>
+              <span className="col-span-2  order-3 md:order-2 flex-1">
+                {bullet}
+              </span>
+              <CopyButton text={bullet} />
+            </li>
           ))}
         </ul>
       </div>
     </div>
-  );
-};
-
-const CopyBullet = ({ index, text }: { index: number; text: string }) => {
-  const [copied, setCopied] = useState(false);
-
-  function copy() {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  return (
-    <li className="grid grid-cols-2 md:flex gap-3 text-sm group border border-border rounded-lg p-3 bg-surface">
-      <div className="text-accent font-bold shrink-0 mt-0.5 order-1">
-        <div className="icon border-none select-none">{index + 1}</div>
-      </div>
-      <span className="col-span-2  order-3 md:order-2 flex-1">{text}</span>
-      <button
-        type="button"
-        onClick={copy}
-        className="shrink-0 order-2 mt-0.5 text-text hover:text-white transition-colors cursor-pointer justify-items-end select-none"
-        title="Copy to clipboard"
-      >
-        {copied ? (
-          <span className="text-white flex items-center gap-2 border border-border p-2 rounded-lg text-xs w-21 bg-success">
-            <DoneOutlinedIcon sx={{ fontSize: 12 }} />
-            Copied
-          </span>
-        ) : (
-          <span className="text-white flex items-center gap-2 border border-border p-2 rounded-lg text-xs w-21 justify-center">
-            <ContentCopyOutlinedIcon sx={{ fontSize: 12 }} />
-            Copy
-          </span>
-        )}
-      </button>
-    </li>
   );
 };
 

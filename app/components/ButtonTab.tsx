@@ -15,7 +15,7 @@ const ButtonTab = ({ href, label }: Props) => {
     <Link
       href={href}
       className={clsx(
-        "btn-auth  ",
+        "btn-auth",
         pathname === href ? "bg-accent" : "hover:bg-gray-800 ",
       )}
     >

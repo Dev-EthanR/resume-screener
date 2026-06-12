@@ -1,10 +1,7 @@
-import { useState } from "react";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Donut from "../Donut";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 
 const ResultsLoading = () => {
   return (

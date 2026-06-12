@@ -3,20 +3,22 @@ import AnalysisResults from "@/app/components/results/AnalysisResults";
 import PhaseTracker from "@/app/components/results/PhaseTracker";
 import ResultsLoading from "@/app/components/results/ResultsLoading";
 import { AnalyzeResult } from "@/entities/AnalyzeResult";
+import { Status } from "@/lib/generated/prisma/enums";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
-interface ProcessData {
+interface ProcessData extends StatusProcess {
   id: string;
-  parsingStatus: "pending" | "generating" | "done";
-  readingStatus: "pending" | "generating" | "done";
-  comparingStatus: "pending" | "generating" | "done";
-  generatingStatus: "pending" | "generating" | "done";
   result: AnalyzeResult | Record<string, never>;
 }
-
+interface StatusProcess {
+  parsingStatus: Status;
+  readingStatus: Status;
+  comparingStatus: Status;
+  generatingStatus: Status;
+}
 async function fetchProcess(id: string): Promise<ProcessData> {
   const res = await axios.get(`/api/process/${id}`);
   return res.data;
@@ -55,11 +57,11 @@ const ResultsPage = () => {
       </div>
     );
 
-  const loadingProcess = {
-    parsingStatus: "generating" as const,
-    readingStatus: "pending" as const,
-    comparingStatus: "pending" as const,
-    generatingStatus: "pending" as const,
+  const loadingProcess: StatusProcess = {
+    parsingStatus: "generating",
+    readingStatus: "pending",
+    comparingStatus: "pending",
+    generatingStatus: "pending",
   };
 
   return (

@@ -28,66 +28,7 @@ interface Props {
 }
 
 const PhaseTracker = ({ process }: Props) => {
-  const phases: Phase[] = [
-    {
-      label: {
-        title: "Parsing resume",
-        subText: "Extracting text and structure",
-      },
-      status: process.parsingStatus,
-      icon: (
-        <FileUploadIcon
-          className={
-            process.parsingStatus === "generating" ? "animate-bounce " : ""
-          }
-        />
-      ),
-    },
-    {
-      label: {
-        title: "Reading job description",
-        subText: "Identifying required skills",
-      },
-      status: process.readingStatus,
-      icon: (
-        <DocumentScannerIcon
-          className={
-            process.readingStatus === "generating" ? "animate-ping " : ""
-          }
-        />
-      ),
-    },
-    {
-      label: {
-        title: "Comparing skills",
-        subText: "Scoring keyword and skill overlap",
-      },
-      status: process.comparingStatus,
-      icon: (
-        <AutorenewIcon
-          className={
-            process.comparingStatus === "generating" ? "animate-spin" : ""
-          }
-        />
-      ),
-    },
-    {
-      label: {
-        title: "Generating suggestions",
-        subText: "Drafting tailored bullet points",
-      },
-      status: process.generatingStatus,
-      icon: (
-        <GeneratingTokensIcon
-          className={
-            process.generatingStatus === "generating"
-              ? "animate-pulse text-yellow-400"
-              : ""
-          }
-        />
-      ),
-    },
-  ];
+  const phases = phaseData(process);
 
   const completedCount = phases.reduce((acc, phase) => {
     if (phase.status === "done") return acc + 1;
@@ -161,3 +102,66 @@ const PhaseRow = ({ phase }: { phase: Phase }) => (
 );
 
 export default PhaseTracker;
+
+const phaseData = (process: ProcessStatus): Phase[] => {
+  return [
+    {
+      label: {
+        title: "Parsing resume",
+        subText: "Extracting text and structure",
+      },
+      status: process.parsingStatus,
+      icon: (
+        <FileUploadIcon
+          className={
+            process.parsingStatus === "generating" ? "animate-bounce " : ""
+          }
+        />
+      ),
+    },
+    {
+      label: {
+        title: "Reading job description",
+        subText: "Identifying required skills",
+      },
+      status: process.readingStatus,
+      icon: (
+        <DocumentScannerIcon
+          className={
+            process.readingStatus === "generating" ? "animate-ping " : ""
+          }
+        />
+      ),
+    },
+    {
+      label: {
+        title: "Comparing skills",
+        subText: "Scoring keyword and skill overlap",
+      },
+      status: process.comparingStatus,
+      icon: (
+        <AutorenewIcon
+          className={
+            process.comparingStatus === "generating" ? "animate-spin" : ""
+          }
+        />
+      ),
+    },
+    {
+      label: {
+        title: "Generating suggestions",
+        subText: "Drafting tailored bullet points",
+      },
+      status: process.generatingStatus,
+      icon: (
+        <GeneratingTokensIcon
+          className={
+            process.generatingStatus === "generating"
+              ? "animate-pulse text-yellow-400"
+              : ""
+          }
+        />
+      ),
+    },
+  ];
+};

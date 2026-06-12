@@ -1,8 +1,8 @@
 "use client";
 import { uploadSchema, UploadType } from "@/util/schemas/upload.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 import { useMutation } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { flushSync } from "react-dom";
@@ -33,9 +33,15 @@ const Upload = () => {
     },
     onSuccess: ({ id }) => {
       const navigate = () => router.push(`/upload/results/${id}?step=2`);
-      if (typeof document !== "undefined" && "startViewTransition" in document) {
-        (document as Document & { startViewTransition: (cb: () => void) => void })
-          .startViewTransition(() => flushSync(navigate));
+      if (
+        typeof document !== "undefined" &&
+        "startViewTransition" in document
+      ) {
+        (
+          document as Document & {
+            startViewTransition: (cb: () => void) => void;
+          }
+        ).startViewTransition(() => flushSync(navigate));
       } else {
         navigate();
       }
