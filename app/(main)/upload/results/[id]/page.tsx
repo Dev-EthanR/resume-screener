@@ -1,6 +1,7 @@
 "use client";
 import AnalysisResults from "@/app/components/results/AnalysisResults";
 import PhaseTracker from "@/app/components/results/PhaseTracker";
+import ResultsLoading from "@/app/components/results/ResultsLoading";
 import { AnalyzeResult } from "@/entities/AnalyzeResult";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -30,7 +31,7 @@ const ResultsPage = () => {
   const inFlow = stepParam !== null;
   const alreadyDone = stepParam === "3";
 
-  const { data, isError, error } = useQuery({
+  const { data, isError, error, isLoading } = useQuery({
     queryKey: ["process", id],
     queryFn: () => fetchProcess(id),
     refetchInterval: (query) => {
@@ -38,7 +39,6 @@ const ResultsPage = () => {
       return 2000;
     },
   });
-
   const isDone = data?.generatingStatus === "done";
 
   useEffect(() => {
@@ -64,13 +64,15 @@ const ResultsPage = () => {
 
   return (
     <div>
-      {isDone && (
+      {isDone && inFlow && (
         <p className="uppercase text-accent text-xs">Analysis complete</p>
       )}
 
       {!isDone && inFlow && !alreadyDone && (
         <PhaseTracker process={data ?? loadingProcess} />
       )}
+
+      {!isDone && !inFlow && isLoading && <ResultsLoading />}
 
       {isDone && data && "score" in data.result && (
         <AnalysisResults result={data.result as AnalyzeResult} />
