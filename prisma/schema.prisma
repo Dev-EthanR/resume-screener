@@ -30,6 +30,9 @@ model User {
 model AnalyseProcess {
   id               String   @id @default(cuid())
   userId           String
+  fileName         String?
+  jobTitle         String?
+  companyName      String?
   parsingStatus    Status   @default(pending)
   readingStatus    Status   @default(pending)
   comparingStatus  Status   @default(pending)

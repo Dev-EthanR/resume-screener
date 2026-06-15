@@ -8,7 +8,7 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import clsx from "clsx";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import Icon from "../Icon";
 import UploadHeader from "./UploadHeader";
@@ -16,9 +16,10 @@ import UploadHeader from "./UploadHeader";
 interface Props {
   register: UseFormRegister<UploadType>;
   setValue: UseFormSetValue<UploadType>;
+  error: FieldErrors;
 }
 
-const FileUploadPanel = ({ register, setValue }: Props) => {
+const FileUploadPanel = ({ register, setValue, error }: Props) => {
   const {
     selectedFile,
     isDragging,
@@ -29,12 +30,17 @@ const FileUploadPanel = ({ register, setValue }: Props) => {
   } = useFileUpload(setValue);
 
   return (
-    <div className="flex flex-col border-border border rounded-lg p-4 gap-4 min-h-110 lg:h-110 min-w-0 w-full">
+    <div className="flex flex-col border-border border rounded-lg p-4 gap-2 min-h-110 lg:h-110 min-w-0 w-full">
       <UploadHeader
         icon={<DescriptionOutlinedIcon sx={{ fontSize: 16 }} />}
         index={1}
         title="Upload your resume"
       />
+      {error.file?.message && (
+        <p className="text-danger-500 text-sm ">
+          {error.file.message as string}
+        </p>
+      )}
       <label
         htmlFor="file"
         onDragOver={(e) => {

@@ -20,6 +20,8 @@ export const uploadSchema = z.object({
       "Job description cannot be more than 8000 characters",
     )
     .trim(),
+  company: z.string().min(1, "Company is required").trim(),
+  position: z.string().min(1, "Position is required").trim(),
 });
 
 export type UploadType = z.infer<typeof uploadSchema>;

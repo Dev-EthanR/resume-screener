@@ -28,6 +28,9 @@ const Upload = () => {
       const fd = new FormData();
       fd.append("file", data.file);
       fd.append("description", data.description);
+      fd.append("company", data.company);
+      fd.append("position", data.position);
+
       const res = await axios.post<{ id: string }>("/api/process", fd);
       return res.data;
     },
@@ -57,25 +60,13 @@ const Upload = () => {
       className="grid lg:grid-cols-2 gap-6 w-full min-w-0"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div>
-        <FileUploadPanel register={register} setValue={setValue} />
-        {errors.file?.message && (
-          <p className="text-danger-500 text-sm mt-2">
-            {errors.file.message as string}
-          </p>
-        )}
-      </div>
-      <div>
-        <JobDescriptionPanel
-          register={register}
-          currentCharacter={currentCharacter}
-        />
-        {errors.description?.message && (
-          <p className="text-danger-500 text-sm mt-2">
-            {errors.description.message}
-          </p>
-        )}
-      </div>
+      <FileUploadPanel register={register} setValue={setValue} error={errors} />
+      <JobDescriptionPanel
+        register={register}
+        currentCharacter={currentCharacter}
+        error={errors}
+      />
+
       {error && <p className="text-danger-500 text-sm mt-2">{error.message}</p>}
       <div className="lg:col-span-2 flex justify-end">
         <button

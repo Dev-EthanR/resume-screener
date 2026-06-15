@@ -11,10 +11,9 @@ interface Props {
   icon: JSX.Element;
   index: number;
   title: string;
-  characters?: Characters;
 }
 
-const UploadHeader = ({ icon, index, title, characters }: Props) => {
+const UploadHeader = ({ icon, index, title }: Props) => {
   return (
     <div className="flex items-center gap-2 justify-between">
       <div className="flex items-center gap-2">
@@ -26,20 +25,6 @@ const UploadHeader = ({ icon, index, title, characters }: Props) => {
           <div className="text-white font-semibold">{title}</div>
         </div>
       </div>
-      {characters && (
-        <div
-          className={clsx(
-            "font-jetbrains text-xs tracking-wider space-x-1",
-            characters.currentCharacter >= characters.characterLimit
-              ? "text-danger-100"
-              : "text-gray-500",
-          )}
-        >
-          <span>{characters.currentCharacter}</span>
-          <span>/</span>
-          <span>{characters.characterLimit}</span>
-        </div>
-      )}
     </div>
   );
 };
