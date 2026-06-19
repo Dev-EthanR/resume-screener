@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { MouseEvent } from "react";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/util/formatDate";
 
 interface Props {
   data: AnalyseProcess;
@@ -18,13 +19,6 @@ interface Props {
 const DisplayCard = ({ data }: Props) => {
   const result = data.result as AnalyzeResult | null;
   const router = useRouter();
-  const getDate = (date: Date): string => {
-    return date.toLocaleDateString("en-us", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   const { mutate } = useMutation({
     mutationFn: async () => {
@@ -82,7 +76,7 @@ const DisplayCard = ({ data }: Props) => {
         </span>
         <div className="text-xs flex items-center justify-center gap-1">
           <span className="inline-block size-1 bg-text rounded-full" />
-          {getDate(data.createdAt)}
+          {formatDate(data.createdAt)}
         </div>
       </div>
       <div className="hidden absolute inset-0 w-full h-full bg-accent/10 group-hover:block" />

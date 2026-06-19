@@ -9,6 +9,7 @@ import { AnalyzeResult } from "@/entities/AnalyzeResult";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import { AnalyseProcess } from "@/lib/generated/prisma/client";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import RecentAnalysis from "@/app/components/dashboard/RecentAnalysis";
 const getScore = (d: AnalyseProcess) =>
   (d.result as unknown as AnalyzeResult)?.score ?? 0;
 
@@ -41,10 +42,15 @@ const DashboardPage = async () => {
 
   const userId = session?.user?.id;
 
-  const [data, totalCount] = await prisma.$transaction([
+  const [data, recent, totalCount] = await prisma.$transaction([
     prisma.analyseProcess.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
+    }),
+    prisma.analyseProcess.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
     }),
     prisma.analyseProcess.count({
       where: { userId },
@@ -118,6 +124,7 @@ const DashboardPage = async () => {
           }
         />
       </div>
+      <RecentAnalysis data={recent} />
     </div>
   );
 };
