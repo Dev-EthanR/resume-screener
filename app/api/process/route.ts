@@ -13,14 +13,14 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const description = formData.get("description");
-    const companyName = formData.get("company");
-    const jobTitle = formData.get("position");
+    const company = formData.get("company");
+    const position = formData.get("position");
 
     const parsed = uploadSchema.safeParse({
       file,
       description,
-      companyName,
-      jobTitle,
+      company,
+      position,
     });
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid" }, { status: 400 });
@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
     const {
       file: validatedFile,
       description: validatedDescription,
-      company,
-      position,
+      company: validatedCompany,
+      position: validatedPosition,
     } = parsed.data;
 
     const process = await prisma.analyseProcess.create({
@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
         result: {},
         fileName: file.name,
-        company,
-        position,
+        companyName: validatedCompany,
+        jobTitle: validatedPosition,
       },
     });
 
