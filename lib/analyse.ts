@@ -1,3 +1,4 @@
+import { CanvasFactory } from "pdf-parse/worker";
 import { PDFParse } from "pdf-parse";
 import { openai } from "./openai";
 import { prisma } from "./prisma";
@@ -14,7 +15,7 @@ export async function runAnalysis(
       where: { id: processId },
       data: { parsingStatus: "generating" },
     });
-    const parser = new PDFParse({ data: fileBuffer });
+    const parser = new PDFParse({ data: fileBuffer, CanvasFactory });
     const pdfData = await parser.getText();
     const resumeText = pdfData.text;
     await prisma.analyseProcess.update({
