@@ -1,4 +1,5 @@
 import DisplayCard from "@/app/components/DisplayCard";
+import EmptyHistory from "@/app/components/EmptyHistory";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -17,11 +18,15 @@ const HistoryPage = async () => {
       <p className=" mb-4 text-sm text-text">
         {historyData.length} saved analyses. Click any card to reopen the report
       </p>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {historyData.map((d) => (
-          <DisplayCard key={d.id} data={d} />
-        ))}
-      </div>
+      {historyData.length === 0 ? (
+        <EmptyHistory />
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {historyData.map((d) => (
+            <DisplayCard key={d.id} data={d} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
