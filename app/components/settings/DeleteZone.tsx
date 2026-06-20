@@ -27,7 +27,7 @@ const DeleteZone = () => {
             onClick={requestConfirm}
             className="btn bg-danger-500 text-white hover:bg-danger-100 self-start py-2"
           >
-            Delete Account
+            Delete my account
           </button>
         )}
         title="Delete your account?"

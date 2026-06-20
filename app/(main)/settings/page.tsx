@@ -37,7 +37,7 @@ const SettingsPage = async ({
 
   if (tab === "danger") {
     return (
-      <section className="border border-danger-500/50 bg-surface rounded-lg p-6">
+      <section className="border border-danger-500/50 bg-danger-500/10 rounded-lg p-6">
         <h2 className="font-semibold text-danger-100 mb-0.5">Danger Zone</h2>
         <p className="text-xs mb-5">
           Actions here are irreversible. Proceed with caution.
