@@ -5,8 +5,14 @@ import { prisma } from "./prisma";
 import bcrypt from "bcrypt";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
+import { cache } from "react";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const {
+  handlers,
+  signIn,
+  signOut,
+  auth: uncachedAuth,
+} = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   providers: [
@@ -39,21 +45,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session }) {
       if (user) token.id = user.id;
+
+      if (trigger === "update" && session) {
+        if (session.name) token.name = session.name;
+        if (session.email) token.email = session.email;
+      }
       return token;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
-        const fresh = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { name: true, email: true },
-        });
-        if (fresh) {
-          session.user.name = fresh.name;
-          session.user.email = fresh.email;
-        }
+        if (token.name) session.user.name = token.name;
+        if (token.email) session.user.email = token.email as string;
       }
       return session;
     },
@@ -65,3 +70,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/auth/signin",
   },
 });
+const auth = cache(uncachedAuth);
+
+export { handlers, signIn, signOut, auth };
