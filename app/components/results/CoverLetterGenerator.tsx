@@ -9,6 +9,7 @@ import {
 } from "@/util/schemas/coverLetter.schema";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import clsx from "clsx";
 import { useState } from "react";
 import CopyButton from "../CopyButton";
@@ -35,6 +36,7 @@ const lengthLabels: Record<CoverLetterLength, string> = {
 const CoverLetterGenerator = ({ processId }: Props) => {
   const [tone, setTone] = useState<CoverLetterTone>("professional");
   const [length, setLength] = useState<CoverLetterLength>("standard");
+  const [isEditing, setIsEditing] = useState(false);
 
   const {
     letters,
@@ -45,7 +47,6 @@ const CoverLetterGenerator = ({ processId }: Props) => {
     isSaving,
     saveError,
     justSaved,
-    isDirty,
     limitReached,
     textareaRef,
     selectLetter,
@@ -53,6 +54,18 @@ const CoverLetterGenerator = ({ processId }: Props) => {
     generate,
     saveEdits,
   } = useCoverLetterGenerator(processId);
+
+  const [prevSelectedId, setPrevSelectedId] = useState(selectedId);
+  if (selectedId !== prevSelectedId) {
+    setPrevSelectedId(selectedId);
+    setIsEditing(false);
+  }
+
+  const [prevJustSaved, setPrevJustSaved] = useState(justSaved);
+  if (justSaved !== prevJustSaved) {
+    setPrevJustSaved(justSaved);
+    if (justSaved) setIsEditing(false);
+  }
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -132,26 +145,33 @@ const CoverLetterGenerator = ({ processId }: Props) => {
             <DescriptionOutlinedIcon sx={{ fontSize: 16 }} />
             Cover letter · {toneLabels[tone]}
           </div>
-          {text && (
+          {text && !isStreaming && (
             <div className="flex items-center gap-2">
               <CopyButton text={text} />
             </div>
           )}
         </div>
 
-        <div className="p-5 space-y-3">
+        <div className="p-5">
           <textarea
             ref={textareaRef}
             value={text}
             onChange={(e) => editText(e.target.value)}
-            readOnly={isStreaming}
+            readOnly={isStreaming || !isEditing}
             placeholder="Your tailored cover letter will appear here."
             rows={1}
             className="w-full bg-transparent min-h-32 text-sm text-white resize-none overflow-hidden focus-visible:outline-none"
           />
+        </div>
 
-          {isDirty && !isStreaming && (
-            <div className="flex items-center gap-3">
+        {text && !isStreaming ? (
+          <div className="flex items-center justify-between gap-3 px-5 py-3 bg-surface border-t border-border">
+            {saveError ? (
+              <p className="text-danger-100 text-xs">{saveError}</p>
+            ) : (
+              <span />
+            )}
+            {isEditing ? (
               <button
                 onClick={saveEdits}
                 disabled={isSaving}
@@ -159,12 +179,23 @@ const CoverLetterGenerator = ({ processId }: Props) => {
               >
                 {isSaving ? "Saving…" : "Save changes"}
               </button>
-              {saveError && (
-                <p className="text-danger-100 text-xs">{saveError}</p>
-              )}
-            </div>
-          )}
-        </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                title="Edit letter"
+                className="shrink-0 text-white hover:text-white transition-colors cursor-pointer select-none"
+              >
+                <span className="text-white flex items-center gap-2 border border-border p-2 rounded-lg text-xs hover:bg-border/40 transition">
+                  <EditOutlinedIcon sx={{ fontSize: 12 }} />
+                  Edit
+                </span>
+              </button>
+            )}
+          </div>
+        ) : (
+          !text && <div className="h-5 bg-surface border-t border-border" />
+        )}
       </div>
 
       <Toast show={justSaved} message="Changes saved" />
