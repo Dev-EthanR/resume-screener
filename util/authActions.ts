@@ -44,7 +44,9 @@ export async function registerAction(formData: SignUpType): Promise<AuthState> {
   if (existing) return { error: "An account with that email already exists" };
 
   const hashed = await bcrypt.hash(password, 10);
-  await prisma.user.create({ data: { fullName, email, password: hashed } });
+  await prisma.user.create({
+    data: { name: fullName, email, password: hashed },
+  });
 
   try {
     await signInWithCredentials(email, password);
