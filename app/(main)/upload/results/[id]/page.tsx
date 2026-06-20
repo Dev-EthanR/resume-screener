@@ -12,6 +12,9 @@ import { useEffect } from "react";
 interface ProcessData extends StatusProcess {
   id: string;
   result: AnalyzeResult | Record<string, never>;
+  fileName: string | null;
+  jobTitle: string | null;
+  companyName: string | null;
 }
 interface StatusProcess {
   parsingStatus: Status;
@@ -71,13 +74,22 @@ const ResultsPage = () => {
       )}
 
       {!isDone && inFlow && !alreadyDone && (
-        <PhaseTracker process={data ?? loadingProcess} />
+        <PhaseTracker
+          process={data ?? loadingProcess}
+          fileName={data?.fileName}
+          jobTitle={data?.jobTitle}
+        />
       )}
 
       {!isDone && !inFlow && isLoading && <ResultsLoading />}
 
       {isDone && data && "score" in data.result && (
-        <AnalysisResults result={data.result as AnalyzeResult} />
+        <AnalysisResults
+          result={data.result as AnalyzeResult}
+          fileName={data.fileName}
+          jobTitle={data.jobTitle}
+          companyName={data.companyName}
+        />
       )}
     </div>
   );

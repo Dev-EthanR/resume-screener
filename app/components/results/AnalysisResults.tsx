@@ -8,15 +8,35 @@ import SkillBlock from "./SkillBlock";
 
 interface Props {
   result: AnalyzeResult;
+  fileName?: string | null;
+  jobTitle?: string | null;
+  companyName?: string | null;
 }
 
-const AnalysisResults = ({ result }: Props) => {
+const AnalysisResults = ({
+  result,
+  fileName,
+  jobTitle,
+  companyName,
+}: Props) => {
   const { score, skills, improvementBullets, summary } = result;
   const label = scoreLabel(score);
 
   return (
     <div className="w-full space-y-6">
-      <h1 className="text-white text-3xl font-bold">Your match report</h1>
+      <div>
+        <h1 className="text-white text-3xl font-bold">Your match report</h1>
+        {(jobTitle || companyName || fileName) && (
+          <p className="text-gray-400 text-sm mt-1">
+            {jobTitle && <span className="font-semibold text-white">{jobTitle}</span>}
+            {jobTitle && companyName && " · "}
+            {companyName}
+            {(jobTitle || companyName) && fileName && " · compared against "}
+            {!(jobTitle || companyName) && fileName && "Compared against "}
+            {fileName}
+          </p>
+        )}
+      </div>
       <div className="border border-border rounded-lg p-6 bg-surface space-y-6">
         <div className="flex flex-col items-center lg:flex-row lg:items-stretch gap-10">
           <Donut

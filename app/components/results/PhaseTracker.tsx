@@ -25,9 +25,11 @@ interface ProcessStatus {
 
 interface Props {
   process: ProcessStatus;
+  fileName?: string | null;
+  jobTitle?: string | null;
 }
 
-const PhaseTracker = ({ process }: Props) => {
+const PhaseTracker = ({ process, fileName, jobTitle }: Props) => {
   const phases = phaseData(process);
 
   const completedCount = phases.reduce((acc, phase) => {
@@ -46,6 +48,15 @@ const PhaseTracker = ({ process }: Props) => {
         color={{ labelColor: "gray", numColor: "white", progressColor: "blue" }}
         text="analyzing"
       />
+      {(fileName || jobTitle) && (
+        <p className="text-gray-300 text-sm text-center">
+          {fileName}
+          {fileName && jobTitle && (
+            <span className="text-gray-500"> vs </span>
+          )}
+          {jobTitle}
+        </p>
+      )}
       <h2 className="text-white font-semibold text-3xl text-center py-4">
         Analyzing your resume
       </h2>
