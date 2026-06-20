@@ -1,11 +1,15 @@
 import { AnalyzeResult } from "@/entities/AnalyzeResult";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import { openai } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
 import {
   CoverLetterLength,
   CoverLetterTone,
+  MAX_COVER_LETTERS,
   coverLetterSchema,
+  encodeLetterIdMarker,
+  encodeStreamErrorMarker,
 } from "@/util/schemas/coverLetter.schema";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,8 +26,6 @@ const lengthInstructions: Record<CoverLetterLength, string> = {
   standard: "about 250-350 words across 3-4 paragraphs",
   detailed: "about 400-500 words across 4-5 paragraphs",
 };
-
-export const MAX_COVER_LETTERS = 3;
 
 export async function GET(
   _req: NextRequest,
@@ -73,10 +75,36 @@ export async function POST(
     );
   }
 
-  const existingCount = await prisma.coverLetter.count({
-    where: { processId: id },
-  });
-  if (existingCount >= MAX_COVER_LETTERS) {
+  // Reserve a slot atomically: count + create happen in one Serializable
+  // transaction so two concurrent requests can't both read a count under the
+  // limit before either insert commits. The reservation uses empty content —
+  // it's filled in (or deleted, on failure) once generation finishes below.
+  let reserved;
+  try {
+    reserved = await prisma.$transaction(
+      async (tx) => {
+        const existingCount = await tx.coverLetter.count({
+          where: { processId: id },
+        });
+        if (existingCount >= MAX_COVER_LETTERS) return null;
+        return tx.coverLetter.create({
+          data: { processId: id, tone, length, content: "" },
+        });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
+  } catch (error) {
+    console.error(`Cover letter reservation failed for ${id}:`, error);
+    return NextResponse.json(
+      {
+        error:
+          "Someone just generated a cover letter for this analysis — please try again.",
+      },
+      { status: 409 },
+    );
+  }
+
+  if (!reserved) {
     return NextResponse.json(
       {
         error: `You've reached the limit of ${MAX_COVER_LETTERS} cover letters for this analysis.`,
@@ -103,9 +131,10 @@ export async function POST(
   });
 
   const encoder = new TextEncoder();
-  let fullText = "";
+  let cancelled = false;
   const readable = new ReadableStream({
     async start(controller) {
+      let fullText = "";
       try {
         for await (const chunk of stream) {
           const text = chunk.choices[0]?.delta?.content;
@@ -114,18 +143,46 @@ export async function POST(
             controller.enqueue(encoder.encode(text));
           }
         }
-        if (fullText.trim()) {
-          await prisma.coverLetter.create({
-            data: { processId: id, tone, length, content: fullText },
-          });
+        if (!fullText.trim()) {
+          throw new Error("Cover letter generation produced no content");
+        }
+        await prisma.coverLetter.update({
+          where: { id: reserved.id },
+          data: { content: fullText },
+        });
+        if (!cancelled) {
+          try {
+            controller.enqueue(
+              encoder.encode(encodeLetterIdMarker(reserved.id)),
+            );
+          } catch {
+            // consumer already disconnected
+          }
         }
       } catch (error) {
         console.error(`Cover letter generation failed for ${id}:`, error);
+        // Release the reserved slot — a failed generation shouldn't cost
+        // the user one of their 3 attempts.
+        await prisma.coverLetter
+          .delete({ where: { id: reserved.id } })
+          .catch(() => {});
+        if (!cancelled) {
+          try {
+            controller.enqueue(encoder.encode(encodeStreamErrorMarker()));
+          } catch {
+            // consumer already disconnected
+          }
+        }
       } finally {
-        controller.close();
+        try {
+          controller.close();
+        } catch {
+          // already closed/cancelled
+        }
       }
     },
     cancel() {
+      cancelled = true;
       stream.controller.abort();
     },
   });
