@@ -25,10 +25,6 @@ export type CoverLetterLength = (typeof coverLetterLengths)[number];
 export type CoverLetterRequest = z.infer<typeof coverLetterSchema>;
 export type CoverLetterUpdateRequest = z.infer<typeof coverLetterUpdateSchema>;
 
-// Trailing markers appended to the streamed response body so the client can
-// tell, only once the stream ends, whether generation actually succeeded —
-// HTTP headers can't be changed once a streaming response has started, so
-// this can't be conveyed as a response header.
 const STREAM_ERROR_MARKER = "\n\n[[STREAM_ERROR]]";
 const LETTER_ID_MARKER_PATTERN = /\n\n\[\[LETTER_ID:([^\]]+)\]\]$/;
 

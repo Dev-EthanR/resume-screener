@@ -1,12 +1,14 @@
 "use client";
 
 import FormField from "@/app/components/FormField";
+import Toast from "@/app/components/Toast";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ProfileData, profileSchema } from "@/util/schemas/profile.schema";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   defaultName: string;
@@ -15,6 +17,18 @@ interface Props {
 
 const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
   const router = useRouter();
+  const [justSaved, setJustSaved] = useState(false);
+  const justSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(() => {
+    return () => {
+      if (justSavedTimeoutRef.current) {
+        clearTimeout(justSavedTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const {
     register,
@@ -29,7 +43,6 @@ const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
   const {
     mutate: updateProfile,
     isPending,
-    isSuccess,
     error,
     reset: resetMutation,
   } = useMutation({
@@ -39,6 +52,15 @@ const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
       resetForm(variables);
       resetMutation();
       router.refresh();
+
+      setJustSaved(true);
+      if (justSavedTimeoutRef.current) {
+        clearTimeout(justSavedTimeoutRef.current);
+      }
+      justSavedTimeoutRef.current = setTimeout(() => {
+        setJustSaved(false);
+        justSavedTimeoutRef.current = null;
+      }, 2000);
     },
   });
 
@@ -66,12 +88,6 @@ const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
         <p className="text-danger-100 text-sm mb-4">{serverError}</p>
       )}
 
-      {isSuccess && (
-        <p className="text-success text-sm mb-4">
-          Profile updated successfully.
-        </p>
-      )}
-
       <button
         type="submit"
         disabled={isPending}
@@ -79,6 +95,8 @@ const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
       >
         {isPending ? "Saving…" : "Save changes"}
       </button>
+
+      <Toast show={justSaved} message="Changes saved" />
     </form>
   );
 };
