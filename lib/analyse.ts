@@ -19,7 +19,7 @@ export async function runAnalysis(
     const resumeText = pdfData.text;
     await prisma.analyseProcess.update({
       where: { id: processId },
-      data: { parsingStatus: "done" },
+      data: { parsingStatus: "done", resumeText },
     });
 
     // Phase 2: Extract job requirements

@@ -2,30 +2,10 @@
 import AnalysisResults from "@/app/components/results/AnalysisResults";
 import PhaseTracker from "@/app/components/results/PhaseTracker";
 import ResultsLoading from "@/app/components/results/ResultsLoading";
+import { useProcess } from "@/app/hooks/useProcess";
 import { AnalyzeResult } from "@/entities/AnalyzeResult";
-import { Status } from "@/lib/generated/prisma/enums";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-
-interface ProcessData extends StatusProcess {
-  id: string;
-  result: AnalyzeResult | Record<string, never>;
-  fileName: string | null;
-  jobTitle: string | null;
-  companyName: string | null;
-}
-interface StatusProcess {
-  parsingStatus: Status;
-  readingStatus: Status;
-  comparingStatus: Status;
-  generatingStatus: Status;
-}
-async function fetchProcess(id: string): Promise<ProcessData> {
-  const res = await axios.get(`/api/process/${id}`);
-  return res.data;
-}
 
 const ResultsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,14 +16,7 @@ const ResultsPage = () => {
   const inFlow = stepParam !== null;
   const alreadyDone = stepParam === "3";
 
-  const { data, isError, error, isLoading } = useQuery({
-    queryKey: ["process", id],
-    queryFn: () => fetchProcess(id),
-    refetchInterval: (query) => {
-      if (query.state.data?.generatingStatus === "done") return false;
-      return 2000;
-    },
-  });
+  const { data, isError, error, isLoading } = useProcess(id);
   const isDone = data?.generatingStatus === "done";
 
   useEffect(() => {
@@ -60,11 +33,11 @@ const ResultsPage = () => {
       </div>
     );
 
-  const loadingProcess: StatusProcess = {
-    parsingStatus: "generating",
-    readingStatus: "pending",
-    comparingStatus: "pending",
-    generatingStatus: "pending",
+  const loadingProcess = {
+    parsingStatus: "generating" as const,
+    readingStatus: "pending" as const,
+    comparingStatus: "pending" as const,
+    generatingStatus: "pending" as const,
   };
 
   return (
@@ -85,6 +58,7 @@ const ResultsPage = () => {
 
       {isDone && data && "score" in data.result && (
         <AnalysisResults
+          id={id}
           result={data.result as AnalyzeResult}
           fileName={data.fileName}
           jobTitle={data.jobTitle}

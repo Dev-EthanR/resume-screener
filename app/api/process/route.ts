@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
         fileName: file.name,
         companyName: validatedCompany,
         jobTitle: validatedPosition,
+        jobDescription: validatedDescription,
       },
     });
 

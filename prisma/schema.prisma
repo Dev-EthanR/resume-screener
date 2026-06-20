@@ -33,6 +33,8 @@ model AnalyseProcess {
   fileName         String?
   jobTitle         String?
   companyName      String?
+  jobDescription   String?
+  resumeText       String?
   parsingStatus    Status   @default(pending)
   readingStatus    Status   @default(pending)
   comparingStatus  Status   @default(pending)
@@ -40,7 +42,19 @@ model AnalyseProcess {
   result           Json
   createdAt        DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user         User          @relation(fields: [userId], references: [id])
+  coverLetters CoverLetter[]
+}
+
+model CoverLetter {
+  id        String            @id @default(cuid())
+  processId String
+  tone      CoverLetterTone
+  length    CoverLetterLength
+  content   String
+  createdAt DateTime          @default(now())
+
+  process AnalyseProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -86,4 +100,17 @@ enum Status {
   generating
   pending
   done
+}
+
+enum CoverLetterTone {
+  professional
+  warm
+  confident
+  concise
+}
+
+enum CoverLetterLength {
+  short
+  standard
+  detailed
 }

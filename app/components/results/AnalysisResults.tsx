@@ -3,10 +3,13 @@ import Donut from "@/app/components/Donut";
 import { AnalyzeResult } from "@/entities/AnalyzeResult";
 import { scoreDonutColor, scoreLabel } from "@/util/score";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import Link from "next/link";
 import CopyButton from "../CopyButton";
 import SkillBlock from "./SkillBlock";
 
 interface Props {
+  id: string;
   result: AnalyzeResult;
   fileName?: string | null;
   jobTitle?: string | null;
@@ -14,6 +17,7 @@ interface Props {
 }
 
 const AnalysisResults = ({
+  id,
   result,
   fileName,
   jobTitle,
@@ -24,18 +28,27 @@ const AnalysisResults = ({
 
   return (
     <div className="w-full space-y-6">
-      <div>
-        <h1 className="text-white text-3xl font-bold">Your match report</h1>
-        {(jobTitle || companyName || fileName) && (
-          <p className="text-gray-400 text-sm mt-1">
-            {jobTitle && <span className="font-semibold text-white">{jobTitle}</span>}
-            {jobTitle && companyName && " · "}
-            {companyName}
-            {(jobTitle || companyName) && fileName && " · compared against "}
-            {!(jobTitle || companyName) && fileName && "Compared against "}
-            {fileName}
-          </p>
-        )}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-white text-3xl font-bold">Your match report</h1>
+          {(jobTitle || companyName || fileName) && (
+            <p className="text-gray-400 text-sm mt-1">
+              {jobTitle && <span className="font-semibold text-white">{jobTitle}</span>}
+              {jobTitle && companyName && " · "}
+              {companyName}
+              {(jobTitle || companyName) && fileName && " · compared against "}
+              {!(jobTitle || companyName) && fileName && "Compared against "}
+              {fileName}
+            </p>
+          )}
+        </div>
+        <Link
+          href={`/upload/results/${id}/cover-letter`}
+          className="btn-outline py-2 flex items-center gap-2 shrink-0"
+        >
+          <ArticleOutlinedIcon sx={{ fontSize: 16 }} />
+          Generate cover letter
+        </Link>
       </div>
       <div className="border border-border rounded-lg p-6 bg-surface space-y-6">
         <div className="flex flex-col items-center lg:flex-row lg:items-stretch gap-10">
