@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ProfileData, profileSchema } from "@/util/schemas/profile.schema";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -18,7 +17,6 @@ interface Props {
 
 const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
   const router = useRouter();
-  const { update } = useSession();
   const [justSaved, setJustSaved] = useState(false);
   const justSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -50,10 +48,9 @@ const ProfileForm = ({ defaultName, defaultEmail }: Props) => {
   } = useMutation({
     mutationFn: (data: ProfileData) => axios.patch("/api/settings", data),
 
-    onSuccess: async (_, variables) => {
+    onSuccess: (_, variables) => {
       resetForm(variables);
       resetMutation();
-      await update({ name: variables.name, email: variables.email });
       router.refresh();
 
       setJustSaved(true);
