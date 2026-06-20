@@ -3,17 +3,13 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
+import ConfirmModal from "@/app/components/ConfirmModal";
 
 const DeleteZone = () => {
-  const [confirming, setConfirming] = useState(false);
-
   const { mutate: deleteAccount, isPending } = useMutation({
     mutationFn: () => axios.delete("/api/settings"),
     onSuccess: () => signOut({ callbackUrl: "/auth/signin" }),
   });
-
-  const handleDelete = () => deleteAccount();
 
   return (
     <div className="flex flex-col gap-3">
@@ -25,31 +21,23 @@ const DeleteZone = () => {
         </p>
       </div>
 
-      {!confirming ? (
-        <button
-          onClick={() => setConfirming(true)}
-          className="btn-outline border-danger-500 text-danger-100 hover:bg-danger-500/10 self-start py-2"
-        >
-          Delete Account
-        </button>
-      ) : (
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-sm text-white">Are you sure?</span>
+      <ConfirmModal
+        trigger={(requestConfirm) => (
           <button
-            onClick={handleDelete}
-            disabled={isPending}
-            className="btn-outline border-danger-500 text-danger-100 hover:bg-danger-500/10 py-2 disabled:opacity-50"
+            onClick={requestConfirm}
+            className="btn bg-danger-500 text-white hover:bg-danger-100 self-start py-2"
           >
-            {isPending ? "Deleting…" : "Yes, delete my account"}
+            Delete Account
           </button>
-          <button
-            onClick={() => setConfirming(false)}
-            className="btn-outline py-2"
-          >
-            Cancel
-          </button>
-        </div>
-      )}
+        )}
+        title="Delete your account?"
+        description="This will permanently delete your account and all associated data. This action cannot be undone."
+        confirmLabel="Delete account"
+        pendingLabel="Deleting…"
+        danger
+        isPending={isPending}
+        onConfirm={() => deleteAccount()}
+      />
     </div>
   );
 };

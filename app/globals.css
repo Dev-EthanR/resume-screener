@@ -20,6 +20,9 @@
 }
 
 @layer utilities {
+  .btn {
+    @apply rounded-lg px-3 text-sm  cursor-pointer;
+  }
   .btn-outline {
     @apply border border-border rounded-lg px-3 text-sm text-white hover:bg-border transition cursor-pointer;
   }
