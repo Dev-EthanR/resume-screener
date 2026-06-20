@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import clsx from "clsx";
 import { useCoverLetterGenerator } from "@/app/hooks/useCoverLetterGenerator";
 import {
   CoverLetterLength,
   CoverLetterTone,
-  MAX_COVER_LETTERS,
   coverLetterLengths,
   coverLetterTones,
 } from "@/util/schemas/coverLetter.schema";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import clsx from "clsx";
+import { useState } from "react";
 import CopyButton from "../CopyButton";
 import SegmentedControl from "../SegmentedControl";
 import Toast from "../Toast";
@@ -54,37 +55,37 @@ const CoverLetterGenerator = ({ processId }: Props) => {
   } = useCoverLetterGenerator(processId);
 
   return (
-    <div className="border border-border rounded-lg p-6 bg-surface space-y-5">
-      {letters.length > 0 && (
-        <div>
-          <p className="text-xs uppercase text-gray-500 mb-2">
-            Saved letters
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {letters.map((letter, index) => (
-              <button
-                key={letter.id}
-                type="button"
-                onClick={() => {
-                  selectLetter(letter);
-                  setTone(letter.tone);
-                  setLength(letter.length);
-                }}
-                className={clsx(
-                  "px-3 py-1.5 rounded-lg text-xs border transition cursor-pointer",
-                  selectedId === letter.id
-                    ? "bg-accent border-accent text-white"
-                    : "border-border text-text hover:bg-border/40",
-                )}
-              >
-                Letter {index + 1} · {toneLabels[letter.tone]}
-              </button>
-            ))}
+    <div className="flex flex-col lg:flex-row gap-6 items-start">
+      <div className="w-full lg:w-70 lg:shrink-0 border border-border rounded-lg bg-surface p-5 space-y-4">
+        {letters.length > 0 && (
+          <div>
+            <p className="text-xs uppercase text-gray-500 mb-2">
+              Saved letters
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {letters.map((letter, index) => (
+                <button
+                  key={letter.id}
+                  type="button"
+                  onClick={() => {
+                    selectLetter(letter);
+                    setTone(letter.tone);
+                    setLength(letter.length);
+                  }}
+                  className={clsx(
+                    "px-3 py-1.5 rounded-2xl text-xs border transition cursor-pointer",
+                    selectedId === letter.id
+                      ? "border-accent text-accent bg-accent/10"
+                      : "border-border text-text hover:bg-border/40",
+                  )}
+                >
+                  Letter {index + 1} · {toneLabels[letter.tone]}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="space-y-3">
         <SegmentedControl
           label="Tone"
           value={tone}
@@ -102,47 +103,68 @@ const CoverLetterGenerator = ({ processId }: Props) => {
           onChange={setLength}
           disabled={isStreaming}
         />
+
+        <div className="border-t border-border pt-4 space-y-2">
+          <button
+            onClick={() => generate(tone, length)}
+            disabled={isStreaming || limitReached}
+            className="btn-primary w-full flex items-center justify-center gap-2 py-2.5 px-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <AutoAwesomeIcon sx={{ fontSize: 16 }} />
+            {isStreaming
+              ? "Writing…"
+              : limitReached
+                ? "Limit reached"
+                : letters.length
+                  ? "Regenerate letter"
+                  : "Generate letter"}
+          </button>
+        </div>
+
+        {generateError && (
+          <p className="text-danger-100 text-xs">{generateError}</p>
+        )}
       </div>
 
-      <textarea
-        ref={textareaRef}
-        value={text}
-        onChange={(e) => editText(e.target.value)}
-        readOnly={isStreaming}
-        placeholder="Your tailored cover letter will appear here."
-        className="w-full border border-border rounded-lg p-4 bg-background min-h-64 max-h-[32rem] text-sm text-white resize-y focus-visible:outline-1 outline-accent"
-      />
+      <div className="flex-1 min-w-0 w-full border border-border rounded-lg overflow-hidden">
+        <div className="flex items-center justify-between gap-3 px-5 py-3 bg-surface border-b border-border">
+          <div className="flex items-center gap-2 text-sm text-text">
+            <DescriptionOutlinedIcon sx={{ fontSize: 16 }} />
+            Cover letter · {toneLabels[tone]}
+          </div>
+          {text && (
+            <div className="flex items-center gap-2">
+              <CopyButton text={text} />
+            </div>
+          )}
+        </div>
 
-      {generateError && <p className="text-danger-100 text-xs">{generateError}</p>}
-      {saveError && <p className="text-danger-100 text-xs">{saveError}</p>}
+        <div className="p-5 space-y-3">
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => editText(e.target.value)}
+            readOnly={isStreaming}
+            placeholder="Your tailored cover letter will appear here."
+            rows={1}
+            className="w-full bg-transparent min-h-32 text-sm text-white resize-none overflow-hidden focus-visible:outline-none"
+          />
 
-      <div className="flex items-center gap-3 flex-wrap">
-        <button
-          onClick={() => generate(tone, length)}
-          disabled={isStreaming || limitReached}
-          className="btn-primary py-2 px-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isStreaming
-            ? "Writing…"
-            : limitReached
-              ? "Limit reached"
-              : letters.length
-                ? "Generate another"
-                : "Generate"}
-        </button>
-        {isDirty && !isStreaming && (
-          <button
-            onClick={saveEdits}
-            disabled={isSaving}
-            className="btn-outline py-2 px-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? "Saving…" : "Save changes"}
-          </button>
-        )}
-        {text && !isStreaming && <CopyButton text={text} />}
-        <p className="text-xs text-gray-500">
-          {letters.length} of {MAX_COVER_LETTERS} generated
-        </p>
+          {isDirty && !isStreaming && (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={saveEdits}
+                disabled={isSaving}
+                className="btn-outline py-2 px-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? "Saving…" : "Save changes"}
+              </button>
+              {saveError && (
+                <p className="text-danger-100 text-xs">{saveError}</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <Toast show={justSaved} message="Changes saved" />

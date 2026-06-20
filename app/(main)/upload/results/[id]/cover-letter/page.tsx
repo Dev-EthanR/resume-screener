@@ -13,7 +13,7 @@ const CoverLetterPage = () => {
   const isDone = data?.generatingStatus === "done";
 
   return (
-    <div className="w-full max-w-2xl space-y-6">
+    <div className="w-full space-y-6">
       <Link
         href={`/upload/results/${id}`}
         className="inline-flex items-center gap-1 text-sm text-text hover:text-white transition-colors"
@@ -23,17 +23,27 @@ const CoverLetterPage = () => {
       </Link>
 
       <div>
-        <h1 className="text-white text-3xl font-bold">Cover letter</h1>
+        <p className="text-xs uppercase tracking-wide text-accent font-semibold">
+          AI cover letter
+        </p>
+        <h1 className="text-white text-3xl font-bold mt-1">
+          Cover letter generator
+        </h1>
         {(data?.jobTitle || data?.companyName) && (
           <p className="text-gray-400 text-sm mt-1">
-            Tailored for{" "}
+            Tailored to{" "}
             {data?.jobTitle && (
               <span className="font-semibold text-white">
                 {data.jobTitle}
               </span>
             )}
             {data?.jobTitle && data?.companyName && " at "}
-            {data?.companyName}
+            {data?.companyName && (
+              <span className="font-semibold text-white">
+                {data.companyName}
+              </span>
+            )}
+            , using your resume and the job description.
           </p>
         )}
       </div>

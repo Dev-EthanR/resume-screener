@@ -133,8 +133,12 @@ export function useCoverLetterGenerator(processId: string) {
   }, []);
 
   useEffect(() => {
-    if (state.isStreaming && textareaRef.current) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+    if (state.isStreaming) {
+      el.scrollTop = el.scrollHeight;
     }
   }, [state.text, state.isStreaming]);
 

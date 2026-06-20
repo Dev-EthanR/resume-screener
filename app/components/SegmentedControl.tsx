@@ -30,9 +30,9 @@ function SegmentedControl<T extends string>({
             disabled={disabled}
             onClick={() => onChange(option)}
             className={clsx(
-              "px-3 py-1.5 rounded-lg text-xs border transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
+              "px-3 py-1.5 rounded-2xl text-xs border transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
               value === option
-                ? "bg-accent border-accent text-white"
+                ? "border-accent text-accent bg-accent/10"
                 : "border-border text-text hover:bg-border/40",
             )}
           >
