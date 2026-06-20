@@ -12,6 +12,7 @@ import {
 } from "@/util/schemas/coverLetter.schema";
 import CopyButton from "../CopyButton";
 import SegmentedControl from "../SegmentedControl";
+import Toast from "../Toast";
 
 interface Props {
   processId: string;
@@ -138,14 +139,13 @@ const CoverLetterGenerator = ({ processId }: Props) => {
             {isSaving ? "Saving…" : "Save changes"}
           </button>
         )}
-        {justSaved && !isDirty && (
-          <span className="text-success text-xs">Changes saved</span>
-        )}
         {text && !isStreaming && <CopyButton text={text} />}
         <p className="text-xs text-gray-500">
           {letters.length} of {MAX_COVER_LETTERS} generated
         </p>
       </div>
+
+      <Toast show={justSaved} message="Changes saved" />
     </div>
   );
 };
